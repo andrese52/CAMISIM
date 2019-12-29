@@ -460,16 +460,6 @@ class ReadSimulationNanosim(ReadSimulationWrapper):
         assert total_size > 0, "Total size needs to be a positive number"
         assert fragment_size_mean > 0, "Mean fragments size needs to be a positive number"
         assert fragment_size_standard_deviation > 0, "Fragment size standard deviation needs to be a positive number"
-        if fragment_size_mean and fragment_size_standard_deviation:
-            assert self.validate_number(fragment_size_mean, minimum=1)
-            assert self.validate_number(fragment_size_standard_deviation, minimum=0)
-            self._fragment_size_mean = fragment_size_mean
-            self._fragment_size_standard_deviation = fragment_size_standard_deviation
-        else:
-            if fragment_size_standard_deviation:
-                assert fragment_size_mean is not None, "Both, mean and sd are requires."
-            if fragment_size_mean:
-                assert fragment_size_standard_deviation is not None, "Both, mean and standard deviation, are required."
         assert self.validate_dir(directory_output)
         if profile is not None:
             self._profile = profile
@@ -525,13 +515,12 @@ class ReadSimulationNanosim(ReadSimulationWrapper):
 
         arguments = [
             'genome',
-            '-med', str(self._fragment_size_mean),
-            '-sd', str(self._fragment_size_standard_deviation),
             '-n', str(fold_coverage),  # rename this, because its not the fold_coverage for wgsim
             '-r', file_path_input,
             '-o', file_path_output_prefix,
             '-c', "tools/nanosim_profile/ecoli",
-            '--seed', str(self._get_seed() % 2**32 - 1) # nanosim seed cannot be > 2**32 -1
+            '--seed', str(self._get_seed() % 2**32 - 1), # nanosim seed cannot be > 2**32 -1
+            '-t', str(32)
             ]
 
         if self._logfile:
