@@ -238,7 +238,7 @@ class ReadSimulationWrapper(GenomePreparation):
                 self._logger.error(msg)
                 raise IOError(msg)
         return file_path_output
-    
+
     def _simulate_reads(self, dict_id_abundance, dict_id_file_path, factor, directory_output):
         """
         Parallel simulation of reads
@@ -291,7 +291,7 @@ class ReadSimulationWrapper(GenomePreparation):
         Abstract class, implement this in your read simulators inheriting from the wrapper
         """
         return
-                
+
 class ReadSimulationPBsim(ReadSimulationWrapper):
     """
     Simulate long (PacBio) reads using pbsim
@@ -304,7 +304,7 @@ class ReadSimulationPBsim(ReadSimulationWrapper):
         super(ReadSimulationPBsim, self).__init__(file_path_executable, **kwargs)
         self._directory_error_profiles = directory_error_profiles
         self._profile = 'standard'
-    
+
     def simulate(
         self, file_path_distribution, file_path_genome_locations, directory_output,
         total_size, profile, fragment_size_mean, fragment_size_standard_deviation):
@@ -345,9 +345,9 @@ class ReadSimulationPBsim(ReadSimulationWrapper):
         dict_id_file_path = self._read_genome_location_file(file_path_genome_locations)
         locs = set(dict_id_abundance.keys()) - set(dict_id_file_path.keys())
         assert set(dict_id_file_path.keys()).issuperset(dict_id_abundance.keys()), "Some ids do not have a genome location %s" % locs
-    
+
         min_sequence_length = 100 # TODO ???
-        
+
         factor = self.get_multiplication_factor(
             dict_id_file_path, dict_id_abundance, total_size, min_sequence_length,
             file_format="fasta", sequence_type="dna", ambiguous=True)
@@ -375,7 +375,7 @@ class ReadSimulationPBsim(ReadSimulationWrapper):
                                 fq.write(newline)
                             else:
                                 fq.write(line)
-    
+
     def _get_sys_cmd(self, file_path_input, fold_coverage, file_path_output_prefix):
         """
         Build system command to be run.
@@ -415,7 +415,7 @@ class ReadSimulationPBsim(ReadSimulationWrapper):
         arguments.extend([
             file_path_input,
             ])
-            
+
         if self._logfile:
             arguments.append(">> '{}'".format(self._logfile))
 
@@ -514,14 +514,14 @@ class ReadSimulationNanosim(ReadSimulationWrapper):
         assert self.validate_dir(file_path_output_prefix, only_parent=True)
 
         arguments = [
-            'linear',
+            'genome',
             '-n', str(fold_coverage),  # rename this, because its not the fold_coverage for wgsim
             '-r', file_path_input,
             '-o', file_path_output_prefix,
             '-c', "tools/nanosim_profile/ecoli",
             '--seed', str(self._get_seed() % 2**32 - 1) # nanosim seed cannot be > 2**32 -1
             ]
-            
+
         if self._logfile:
             arguments.append(">> '{}'".format(self._logfile))
 
@@ -537,7 +537,7 @@ class ReadSimulationWgsim(ReadSimulationWrapper):
     Simulate reads using wgsim
     """
     _label = "ReadSimulationWgsim"
-    
+
     def __init__(self, file_path_executable, directory_error_profiles, **kwargs):
         super(ReadSimulationWgsim, self).__init__(file_path_executable, **kwargs)
 
@@ -637,13 +637,13 @@ class ReadSimulationWgsim(ReadSimulationWrapper):
             "{}".format(file_path_output_prefix + '2.fq'),
             "{}".format(file_path_output_prefix + '.sam')
             ])
-            
+
         if self._logfile:
             arguments.append(">> '{}'".format(self._logfile))
 
         cmd = "{exe} {args}".format(exe=self._file_path_executable, args=" ".join(arguments))
         return cmd
-        
+
 
 # #################
 # ReadSimulationArt - Art-Illumina Wrapper
