@@ -486,8 +486,8 @@ class ReadSimulationNanosim(ReadSimulationWrapper):
                 id_to_cigar_map[prefix] = sam_from_reads.get_cigars_nanosim(os.path.join(directory_output,f))
                 os.remove(os.path.join(directory_output,f)) # error_profile files are huge (TODO temporary requirement is still high)
         for f in files:
-            if f.endswith("_reads.fasta"):
-                prefix = f.rsplit(".",1)[0].rsplit("_",1)[0]
+            if f.endswith("_aligned_reads.fasta"):
+                prefix = f.rsplit(".",1)[0].rsplit("_",2)[0]
                 read_file = os.path.join(directory_output,f)
                 cigars = id_to_cigar_map[prefix]
                 reference_path = dict_id_file_path[prefix]
@@ -520,7 +520,7 @@ class ReadSimulationNanosim(ReadSimulationWrapper):
             '-o', file_path_output_prefix,
             '-c', "tools/nanosim_profile/ecoli",
             '--seed', str(self._get_seed() % 2**32 - 1), # nanosim seed cannot be > 2**32 -1
-            '-t', str(32)
+            '-t', "32"
             ]
 
         if self._logfile:

@@ -30,8 +30,8 @@ def write_sam(read_file, id_to_cigar_map, reference_path, orig_prefix):
             if line.startswith('>'):
                 name, start, align_status, index, strand, soffset, align_length, eoffset = line.strip().split('_')
                 ref_name = name[1:] # first sign of name is ">"
-                QNAME = ref_name + "-" + index 
-                query = ref_name + "-" + index 
+                QNAME = ref_name + "-" + index
+                query = ref_name + "-" + index
                 if strand == 'R':
                     FLAG = str(16)
                 else:
@@ -53,7 +53,7 @@ def write_sam(read_file, id_to_cigar_map, reference_path, orig_prefix):
                 QUAL = '*'  # no quality for nanosim
             else:
                 SEQ = line.strip()
-                TLEN = str(len(SEQ)) 
+                TLEN = str(len(SEQ))
                 if CIGAR != '*': # unmapped bases counted as insertions in read
                     CIGAR = soffset + "I" + CIGAR + str(int(align_length) - int(pos)) + "M" + eoffset + "I"
                 sam_line = [QNAME, FLAG, RNAME, POS, MAPQ, CIGAR, RNEXT, PNEXT, TLEN, SEQ, QUAL]
@@ -115,7 +115,7 @@ def get_cigar_length(cigar):
     return length
 
 def convert_fasta(fasta_reads):
-    out_name = fasta_reads.rsplit("_",1)[0] + ".fq" # /path/to/genomeid_reads.fasta
+    out_name = fasta_reads.rsplit("_",2)[0] + ".fq" # /path/to/genomeid_reads.fasta
     with open(fasta_reads,'r') as reads:
         with open(out_name, 'w') as out:
             for line in reads:
